@@ -1,0 +1,33 @@
+{% extends 'layout.html' %}
+
+
+{% block content %}
+<a href="{% url 'start' auction.pk %}">start</a>
+<br>
+<a href="{% url 'stop' auction.pk %}">stop</a>
+<br>
+<a href="{% url 'delete_auction' auction.pk %}">delete_auction</a>
+
+<h1>{{auction.pk}}</h1>
+<p>min_price {{auction.min_price}}</p>
+<p>max_price {{auction.max_price}}</p>
+<p>total_price {{auction.total_price}}</p>
+<p>percentage_reduction {{auction.percentage_reduction}}</p>
+<p>start_time {{auction.start_time}}</p>
+<p>finish_time {{auction.finish_time}}</p>
+<p>step_price {{auction.step_price}}</p>
+<p>interval {{auction.interval}}</p>
+<p>is_winner_exist {{auction.is_winner_exist}}</p>
+<p>is_step_taken {{auction.is_step_taken}}</p>
+<p>is_run {{auction.is_run}}</p>
+<p>is_done {{auction.is_done}}</p>
+<p>is_stop {{auction.is_stop}}</p>
+<p>order_id {{auction.order_id}}</p>
+<p>client_id {{auction.client_id}}</p>
+<p>executor_id {{auction.executor_id}}</p>
+<p>unregister_executor_name {{auction.unregister_executor_name}}</p>
+<p>unregister_executor_contacts {{auction.unregister_executor_contacts}}</p>
+
+
+
+{% endblock content %}

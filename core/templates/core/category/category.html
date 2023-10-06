@@ -1,0 +1,18 @@
+{% extends 'layout.html' %}
+
+
+{% block content %}
+
+<h1>{{category.name}}</h1>
+
+
+{% for order in category.orders.all %}
+
+<ul>
+    <li><a href="{{order.get_absolute_url}}">{{order.name}}</a></li>
+</ul>
+
+{% endfor %}
+
+
+{% endblock content %}

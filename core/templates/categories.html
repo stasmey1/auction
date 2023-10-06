@@ -1,0 +1,12 @@
+{% extends 'layout.html' %}
+
+
+{% block content %}
+
+{% for category in categories %}
+<p><a href="{{ url_for('category', id=category.id) }}">{{category.name}}</a></p>
+{% endfor %}
+
+{% endblock content %}
+
+

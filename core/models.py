@@ -1,7 +1,7 @@
 import datetime
 import threading
 import time
-from typing import NoReturn, Union
+from typing import Optional
 
 from django.contrib.auth.models import User
 from django.urls import reverse
@@ -78,7 +78,7 @@ class Auction(models.Model):
     def get_absolute_url(self):
         return reverse('auction', kwargs={'pk': self.pk})
 
-    def setup(self) -> NoReturn:
+    def setup_(self) -> None:
         self.total_price = self.min_price
         self.executor_id = None
         self.unregister_executor_name = None
@@ -97,17 +97,18 @@ class Auction(models.Model):
     def get_percentage_reduction(self) -> int:
         return int((self.total_price / self.min_price) * 100 - 100)
 
-    def auto_price_increase(self) -> NoReturn:
+    def auto_price_increase(self) -> None:
         while True:
 
             if any([self.is_done, self.is_stop]):
                 break
 
+            print([i for i in threading.enumerate()])
+            print('is_done', self.is_done)
+            print('is_stop', self.is_stop)
+            print()
+
             time.sleep(int(self.interval))
-            print(threading.enumerate())
-            print()
-            print([self.is_done, self.is_stop])
-            print()
 
             with threading.Lock():
                 self.total_price += self.step_price
@@ -115,20 +116,25 @@ class Auction(models.Model):
 
             self.save()
 
-    def check_for_end(self) -> NoReturn:
+    def check_for_end(self) -> None:
         while True:
-            if not self.is_can_take_step():
-                self.is_done = True
-                self.is_run = False
-                self.finish_time = datetime.datetime.now()
 
-                self.save()
-                break
+            time.sleep(1)
 
             if any([self.is_done, self.is_stop]):
                 break
 
-    def save_contacts(self, data: Union[dict, None]) -> NoReturn:
+            if not self.is_can_take_step():
+                with threading.Lock():
+                    self.is_done = True
+                    self.is_run = False
+                    self.finish_time = datetime.datetime.now()
+
+                self.save()
+
+                break
+
+    def save_contacts(self, data: Optional[dict]) -> None:
         if self.is_protected_mode and data:
             self.executor_id = data.get('id')
         else:
@@ -137,24 +143,26 @@ class Auction(models.Model):
 
         self.save()
 
-    def agree(self, data: Union[dict, None] = None) -> NoReturn:
-        self.save_contacts(data)
-        self.is_winner_exist = True
-        self.is_done = True
-        self.is_run = False
-        self.finish_time = datetime.datetime.now()
+    def agree(self, data: Optional[dict] = None) -> None:
+        with threading.Lock():
+            self.save_contacts(data)
+            self.is_winner_exist = True
+            self.is_done = True
+            self.is_run = False
+            self.finish_time = datetime.datetime.now()
 
         self.save()
 
-    def stop(self) -> NoReturn:
-        self.is_run = False
-        self.is_stop = True
-        self.is_done = True
-        self.finish_time = datetime.datetime.now()
+    def stop_auction(self) -> None:
+        with threading.Lock():
+            self.is_run = False
+            self.is_stop = True
+            self.is_done = True
+            self.finish_time = datetime.datetime.now()
 
         self.save()
 
-    def start_auction(self) -> NoReturn:
-        self.setup()
-        threading.Thread(target=self.auto_price_increase).start()
-        threading.Thread(target=self.check_for_end).start()
+    def start_auction(self) -> None:
+        self.setup_()
+        threading.Thread(name=self.auto_price_increase.__name__, target=self.auto_price_increase).start()
+        threading.Thread(name=self.check_for_end.__name__, target=self.check_for_end).start()

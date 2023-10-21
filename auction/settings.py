@@ -79,7 +79,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'auction',
         'USER': 'postgres',
-        'PASSWORD': 'admin',
+        'PASSWORD': '0000',
         'HOST': 'localhost',
         'PORT': '',
     }

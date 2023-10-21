@@ -35,7 +35,8 @@ class CreateOrderView(CreateView):
 
 def auction(request, pk):
     auction = Auction.objects.get(pk=pk)
-    return render(request, 'core\\auction\\auction.html', locals())
+    context = {'auction': auction}
+    return render(request, 'core\\auction\\auction.html', context)
 
 
 class CreateAuctionView(CreateView):
@@ -52,10 +53,10 @@ class DeleteAuctionView(DeleteView):
 def start(request, pk):
     auction = Auction.objects.get(pk=pk)
     auction.start_auction()
-    return redirect('auction', auction.pk)
+    return redirect('auction', pk)
 
 
 def stop(request, pk):
     auction = Auction.objects.get(pk=pk)
-    auction.stop()
-    return redirect('auction', auction.pk)
+    auction.stop_auction()
+    return redirect('auction', pk)

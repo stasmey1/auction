@@ -8,6 +8,18 @@
 <br>
 <a href="{% url 'delete_auction' auction.pk %}">delete_auction</a>
 
+{% if auction.is_run %}
+<p>Аукцион идет</p>
+{% endif %}
+
+{% if auction.is_stop %}
+<p>Аукцион остановлен</p>
+{% endif %}
+
+{% if auction.is_done %}
+<p>Аукцион закончился</p>
+{% endif %}
+
 <h1>{{auction.pk}}</h1>
 <p>min_price {{auction.min_price}}</p>
 <p>max_price {{auction.max_price}}</p>
